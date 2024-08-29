@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn import metrics
+import matplotlib.pyplot as plt
+
+data = pd.read_csv('/content/Advertising Dataset (2).csv')
+
+print(data.head())
+print(data.describe())
+print(data.isnull().sum())
+
+X = data[['TV', 'Radio', 'Newspaper']]
+y = data['Sales']
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+model = LinearRegression()
+model.fit(X_train, y_train)
+intercept = model.intercept_
+coefficients = model.coef_
+
+print("Intercept (c):", intercept)
+print("Coefficients (m1, m2, m3):", coefficients)
+
+y_pred = model.predict(X_test)
+mae = metrics.mean_absolute_error(y_test, y_pred)
+mse = metrics.mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+acc= model.score(X_test, y_test)
+
+print("Mean Absolute Error (MAE):", mae)
+print("Mean Squared Error (MSE):", mse)
+print("Root Mean Squared Error (RMSE):", rmse)
+print("Accuracy:",acc)
+plt.figure(figsize=(10, 6))
+plt.scatter(y_test, y_pred, color='blue', alpha=0.6, label='Predicted vs Actual')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], color='red', linewidth=2, label='Perfect Prediction')
+plt.xlabel('Actual Sales')
+plt.ylabel('Predicted Sales')
+plt.title('Actual vs Predicted Sales')
+plt.legend()
+plt.grid(True)
+plt.show()
